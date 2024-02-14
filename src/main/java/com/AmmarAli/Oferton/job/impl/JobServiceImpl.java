@@ -2,10 +2,12 @@ package com.AmmarAli.Oferton.job.impl;
 
 import com.AmmarAli.Oferton.job.Job;
 import com.AmmarAli.Oferton.job.JobService;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class JobServiceImpl implements JobService {
     private List<Job> jobs = new ArrayList<>();
     @Override
