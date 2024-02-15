@@ -11,16 +11,18 @@ public class JobController {
     public JobController(JobService jobService) {
         this.jobService = jobService;
     }
-
-
     @GetMapping("/jobs")
-    public List<Job> findAll(){
-        return jobService.findAll();
+    public ResponseEntity<List<Job>> findAll(){
+
+        return ResponseEntity.ok(jobService.findAll());
     }
     @PostMapping("/jobs")
-    public String createJob(@RequestBody Job job){
-        jobService.createJob(job);
-        return "Job added successfully";
+    public ResponseEntity<String> createJob(@RequestBody Job job){
+        if (job != null){
+            jobService.createJob(job);
+            return new ResponseEntity<>("Job created successfully", HttpStatus.OK);
+        }
+        return new ResponseEntity<>("Unable to create a job", HttpStatus.BAD_REQUEST);
     }
     @GetMapping("/jobs/{id}")
     public ResponseEntity<Job> getJobsById(@PathVariable Long id){
