@@ -1,22 +1,25 @@
-package com.AmmarAli.Oferton.job;
+package com.AmmarAli.Oferton.job.controller;
 
+import com.AmmarAli.Oferton.job.entites.Job;
+import com.AmmarAli.Oferton.job.repositories.JobService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/jobs")
 public class JobController {
     private final JobService jobService;
     public JobController(JobService jobService) {
         this.jobService = jobService;
     }
-    @GetMapping("/jobs")
+    @GetMapping
     public ResponseEntity<List<Job>> findAll(){
 
         return ResponseEntity.ok(jobService.findAll());
     }
-    @PostMapping("/jobs")
+    @PostMapping
     public ResponseEntity<String> createJob(@RequestBody Job job){
         if (job != null){
             jobService.createJob(job);
@@ -25,7 +28,7 @@ public class JobController {
         return new ResponseEntity<>("Unable to create a job: Job object is null", HttpStatus.BAD_REQUEST);
     }
 
-    @GetMapping("/jobs/{id}")
+    @GetMapping("{id}")
     public ResponseEntity<Job> getJobsById(@PathVariable Long id){
         Job job = jobService.getJobsById(id);
         if (job != null){
@@ -34,7 +37,7 @@ public class JobController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @DeleteMapping("/jobs/{id}")
+    @DeleteMapping("{id}")
     public ResponseEntity<String> deleteJobsById(@PathVariable Long id){
         boolean deleted = jobService.deleteJobsById(id);
         if (deleted){
@@ -42,7 +45,8 @@ public class JobController {
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-    @PutMapping("/jobs/{id}")
+//    @RequestMapping(value = "/jobs/{id}", method = RequestMethod.PUT)
+    @PutMapping("{id}")
     public ResponseEntity<String> updateJob(@PathVariable Long id, @RequestBody Job updateJob){
         boolean updated = jobService.updateJob(id, updateJob);
         if (updated){
