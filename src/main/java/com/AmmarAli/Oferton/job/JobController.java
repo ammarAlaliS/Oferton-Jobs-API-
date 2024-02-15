@@ -1,5 +1,7 @@
 package com.AmmarAli.Oferton.job;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -21,9 +23,12 @@ public class JobController {
         return "Job added successfully";
     }
     @GetMapping("/jobs/{id}")
-    public Job getJobsById(@PathVariable Long id){
+    public ResponseEntity<Job> getJobsById(@PathVariable Long id){
         Job job = jobService.getJobsById(id);
-        return  job;
+        if (job != null){
+            return new ResponseEntity<>(job, HttpStatus.OK);
+        }
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
 }
