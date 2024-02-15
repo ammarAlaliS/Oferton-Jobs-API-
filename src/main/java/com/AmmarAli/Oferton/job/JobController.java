@@ -20,10 +20,11 @@ public class JobController {
     public ResponseEntity<String> createJob(@RequestBody Job job){
         if (job != null){
             jobService.createJob(job);
-            return new ResponseEntity<>("Job created successfully", HttpStatus.OK);
+            return new ResponseEntity<>("Job created successfully", HttpStatus.CREATED);
         }
-        return new ResponseEntity<>("Unable to create a job", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("Unable to create a job: Job object is null", HttpStatus.BAD_REQUEST);
     }
+
     @GetMapping("/jobs/{id}")
     public ResponseEntity<Job> getJobsById(@PathVariable Long id){
         Job job = jobService.getJobsById(id);
