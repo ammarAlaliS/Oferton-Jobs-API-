@@ -1,8 +1,10 @@
 package com.AmmarAli.Oferton.job.serviceImpl;
 
+import com.AmmarAli.Oferton.company.entities.Company;
 import com.AmmarAli.Oferton.job.entites.Job;
 import com.AmmarAli.Oferton.job.repositories.JobRepository;
 import com.AmmarAli.Oferton.job.repositories.JobService;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -10,8 +12,6 @@ import java.util.Optional;
 @Service
 public class JobServiceImpl implements JobService {
 
-    //    private List<Job> jobs = new ArrayList<>();
-    private Long nextId = 1L;
     JobRepository jobRepository;
     public JobServiceImpl(JobRepository jobRepository) {
         this.jobRepository = jobRepository;
@@ -24,7 +24,6 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public void createJob(Job job) {
-        job.setId(nextId++);
         jobRepository.save(job);
     }
 
@@ -36,9 +35,14 @@ public class JobServiceImpl implements JobService {
     @Override
     public boolean deleteJobsById(Long id) {
         try {
-            jobRepository.deleteById(id);
-            return true;
-        }catch (Exception e){
+            Optional<Job> companyOptional = jobRepository.findById(id);
+            if (companyOptional.isPresent()) {
+                jobRepository.deleteById(id);
+                return true;
+            } else {
+                return false;
+            }
+        } catch (EmptyResultDataAccessException e) {
             return false;
         }
     }
