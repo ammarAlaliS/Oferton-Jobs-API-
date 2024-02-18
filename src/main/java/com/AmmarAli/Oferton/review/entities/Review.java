@@ -12,9 +12,9 @@ public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
-    private String description;
-    private double rating;
+    private String review_user_name;
+    private String review_description;
+    private double review_rating;
 
     @JsonIgnore
     @ManyToOne

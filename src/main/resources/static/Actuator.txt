@@ -33,6 +33,7 @@ http://localhost:8080/actuator
 EXPOSE the others endpoints
 
 add this configuration on application.property file to expose all endpoints.
+
 #Actuator
 management.endpoints.web.exposure.include=*
 management.endpoint.health.show-details=always

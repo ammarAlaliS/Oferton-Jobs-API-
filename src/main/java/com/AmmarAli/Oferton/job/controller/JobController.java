@@ -2,88 +2,66 @@ package com.AmmarAli.Oferton.job.controller;
 
 import com.AmmarAli.Oferton.job.entites.Job;
 import com.AmmarAli.Oferton.job.repositories.JobService;
+import com.AmmarAli.Oferton.review.entities.Review;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.util.List;
 
 @RestController
-@RequestMapping("/jobs")
+@RequestMapping("/company/{companyId}")
 public class JobController {
-    private static final Logger logger = LoggerFactory.getLogger(JobController.class);
 
-    private final JobService jobService;
+    final JobService jobService;
 
     public JobController(JobService jobService) {
         this.jobService = jobService;
     }
-
-    @GetMapping
-    public ResponseEntity<?> findAll() {
-        try {
-            List<Job> jobs = jobService.findAll();
+    @GetMapping("/job")
+    public ResponseEntity<?> getAllJob(@PathVariable Long companyId){
+        List<Job> jobs = jobService.getAllJob(companyId);
+        if (jobs != null && !jobs.isEmpty()) {
             return ResponseEntity.ok(jobs);
-        } catch (Exception e) {
-            logger.error("Error fetching all jobs", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unable to find all Job");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No jobs found for companyId: " + companyId);
         }
+    }
+    @GetMapping("/job/{jobId}")
+    public ResponseEntity<?> getJobById(@PathVariable Long companyId,
+                          @PathVariable Long jobId){
+        Job isJobExits = jobService.getJobById(companyId, jobId);
+        if (isJobExits != null){
+            return new ResponseEntity<>(jobService.getJobById(companyId, jobId), HttpStatus.OK);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No jobs found with jobId: " + jobId + " for companyId: " + companyId);
+
+    }
+    @PostMapping("/job")
+    public ResponseEntity<String> createJob(@PathVariable Long companyId,
+                                            @RequestBody Job job){
+        boolean isJobCreated = jobService.createJob(companyId, job);
+        if (isJobCreated){
+            return new ResponseEntity<>("Job created successfully", HttpStatus.CREATED);
+        }
+            return new ResponseEntity<>("Unable to create a Job", HttpStatus.BAD_REQUEST);
+    }
+    @PutMapping("/job/{jobId}")
+    public ResponseEntity<String>  updateJob(@PathVariable Long companyId,
+                                                @PathVariable Long jobId,
+                                                @RequestBody Job job){
+        boolean isJobUpdated = jobService.updateJob(companyId,jobId , job);
+        if (isJobUpdated){
+            return new ResponseEntity<>("job updated successfully", HttpStatus.OK);
+        }
+        return new ResponseEntity<>("job does not exits", HttpStatus.NOT_FOUND);
+    }
+    @DeleteMapping("/job/{jobId}")
+    public ResponseEntity<String> deleteReview(@PathVariable Long companyId, @PathVariable Long jobId){
+        boolean isJobDeleted = jobService.deleteJob(companyId,jobId);
+        if (isJobDeleted){
+            return new ResponseEntity<>("job Deleted successfully", HttpStatus.OK);
+        }
+        return new ResponseEntity<>("job does not exits", HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping
-    public ResponseEntity<String> createJob(@RequestBody Job job) {
-        try {
-            if (job != null) {
-                jobService.createJob(job);
-                return new ResponseEntity<>("Job created successfully", HttpStatus.CREATED);
-            }
-            return new ResponseEntity<>("Unable to create a job: Job object is null", HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            logger.error("Error creating job", e);
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @GetMapping("{id}")
-    public ResponseEntity<Job> getJobById(@PathVariable Long id) {
-        try {
-            Job job = jobService.getJobsById(id);
-            if (job != null) {
-                return new ResponseEntity<>(job, HttpStatus.OK);
-            }
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            logger.error("Error fetching job with ID: " + id, e);
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @DeleteMapping("{id}")
-    public ResponseEntity<String> deleteJobById(@PathVariable Long id) {
-        try {
-            boolean deleted = jobService.deleteJobsById(id);
-            if (deleted) {
-                return new ResponseEntity<>("Job deleted successfully", HttpStatus.OK);
-            }
-            return new ResponseEntity<>("Unable to delete Job Id no found",HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            logger.error("Error deleting job with ID: " + id, e);
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @PutMapping("{id}")
-    public ResponseEntity<String> updateJob(@PathVariable Long id, @RequestBody Job updateJob) {
-        try {
-            boolean updated = jobService.updateJob(id, updateJob);
-            if (updated) {
-                return new ResponseEntity<>("Job has been updated successfully", HttpStatus.OK);
-            }
-            return new ResponseEntity<>("Job does not exist", HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            logger.error("Error updating job with ID: " + id, e);
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 }

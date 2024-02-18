@@ -38,8 +38,8 @@ public class CompanyImplService implements CompanyService {
         Optional<Company> companyOptional = companyRepository.findById(id);
         if (companyOptional.isPresent()){
             Company company = companyOptional.get();
-            company.setName(updateCompany.getName());
-            company.setDescription(updateCompany.getDescription());
+            company.setCompany_title(updateCompany.getCompany_title());
+            company.setCompany_description(updateCompany.getCompany_description());
             company.setJobs(updateCompany.getJobs());
             companyRepository.save(company);
             return true;

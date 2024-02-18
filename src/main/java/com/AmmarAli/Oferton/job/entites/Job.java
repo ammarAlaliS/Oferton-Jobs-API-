@@ -1,6 +1,7 @@
 package com.AmmarAli.Oferton.job.entites;
 
 import com.AmmarAli.Oferton.company.entities.Company;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -13,17 +14,17 @@ public class Job {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    private String job_title;
 
-    private String description;
+    private String job_description;
 
-    private String minSalary;
+    private String job_minSalary;
 
-    private String maxSalary;
+    private String job_maxSalary;
 
-    private String location;
+    private String job_location;
 
+    @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "company_id")
     private Company company;
 }
